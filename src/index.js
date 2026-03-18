@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
 
 const pizzaData = [
   {
@@ -47,39 +47,47 @@ const pizzaData = [
   },
 ];
 
-
 function App() {
   return (
-    <div className='container'>
+    <div className="container">
       <Header />
       <Menu />
       <Footer />
     </div>
-  )
+  );
 }
 
 function Header() {
   return (
-    <header className='header'>
+    <header className="header">
       <h1>Fast React Pizza Co.</h1>
     </header>
-  )
+  );
 }
 
 function Menu() {
+  const pizzas = pizzaData;
+  const numPizzas = pizzas.length;
+
   return (
-    <main className='menu'>
+    <main className="menu">
       <h2>Our menu</h2>
-      <Pizza />
-      <Pizza />
-      <Pizza />
+      {numPizzas > 0 ? (
+        <ul className="pizzas">
+          {pizzaData.map((pizza) => (
+            <Pizza key={pizza.name} pizzaObj={pizza} />
+          ))}
+        </ul>
+      ) : (
+        <p>We're still working on oue menu. Please come back later :)</p>
+      )}
     </main>
-  )
+  );
 }
 
 function Footer() {
   const hour = new Date().getHours();
-  const openHour = 12;
+  const openHour = 9;
   const closeHour = 22;
   const isOpen = hour >= openHour && hour <= closeHour;
 
@@ -87,25 +95,47 @@ function Footer() {
   // else  alert("Sorry we're closed!")
 
   return (
-    <footer className='footer'>{new Date().toLocaleTimeString()}. We're currently open!</footer>
-  )
+    <footer className="footer">
+      {isOpen ? (
+        <Order openHour={openHour} closeHour={closeHour}/>
+      ) : (
+        <p>
+          We're happy to welcome you between {openHour}:00 and {closeHour}:00
+        </p>
+      )}
+    </footer>
+  );
 }
 
-function Pizza() {
+function Pizza(props) {
+  if (props.pizzaObj.soldOut) return null;
+
   return (
-    <div>
-      <img src="pizzas/spinaci.jpg" alt="Pizza Spinaci" />
-      <h3>Pizza Prosciutto</h3>
-      <p>Tomato, mozarella, ham, aragula, and burrata cheese</p>
-    </div>
-  )
+    <li className="pizza">
+      <img src={props.pizzaObj.photoName} alt={props.pizzaObj.name} />
+      <div>
+        <h3>{props.pizzaObj.name}</h3>
+        <p>{props.pizzaObj.ingredients}</p>
+        <span>{props.pizzaObj.price + 3}</span>
+      </div>
+      <p>{props.pizzaObj.soldOut}</p>
+    </li>
+  );
 }
+
+function Order(props) {
+  return (
+    <div className="order">
+      <p>We're open until {props.closeHour}:00. Come visit us or order online</p>
+      <button className="btn">Order</button>
+    </div>
+  );
+}
+
 // React v18
-const root = ReactDOM.createRoot(
-  document.getElementById("root")
-);
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <App />
-  </React.StrictMode>
+  </React.StrictMode>,
 );
